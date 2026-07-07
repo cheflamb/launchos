@@ -180,6 +180,12 @@
   .tier .fee .was{font-size:22px;font-weight:500;color:var(--ink-3);text-decoration:line-through;text-decoration-color:rgba(189,177,162,.5)}
   .tier .foundingtag{font-family:'Space Grotesk',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.02em;color:var(--gold-deep);margin-top:-8px}
   .foundingpill{display:inline-block;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:12.5px;letter-spacing:.02em;color:var(--on-gold);background:var(--gold);padding:6px 15px;border-radius:var(--r-pill);margin-bottom:16px}
+  .spots{max-width:430px;margin:0 auto 42px;text-align:center}
+  .spots .pips{display:flex;gap:6px;justify-content:center;margin-bottom:12px}
+  .spots .pip{height:8px;flex:1 1 0;border-radius:var(--r-pill);background:var(--gold)}
+  .spots .pip.taken{background:rgba(245,239,230,.13)}
+  .spots-text{font-family:'Space Grotesk',sans-serif;font-size:13.5px;letter-spacing:.01em;color:var(--ink-2);margin:0}
+  .spots-text strong{color:var(--gold);font-weight:700}
   .tier .desc{color:var(--ink-2);font-size:14px;margin:0}
   .tier ul{list-style:none;margin:0;padding:0;display:grid;gap:11px}
   .tier li{display:flex;gap:10px;font-size:14px;color:var(--ink-2)}
@@ -345,6 +351,10 @@
         <h2 class="h2">Pick how much you want off your plate.</h2>
         <p class="lead">The first 10 founding clients get a founding rate, in exchange for candid feedback and, if you love the result, a testimonial. Your rate is locked for this launch. After the first 10, pricing returns to standard.</p>
       </div>
+      <div class="spots reveal" aria-live="polite">
+        <div class="pips" id="rrr-pips"></div>
+        <p class="spots-text"><strong id="rrr-spots-left">10</strong> of <span id="rrr-spots-total">10</span> founding spots remaining</p>
+      </div>
       <div class="tiers">
         <div class="tier reveal">
           <div class="name">The Setup</div>
@@ -416,6 +426,24 @@
 </footer>
 
 <script>
+  // ===== Founding spots meter =====
+  // As founding clients sign, change SPOTS_TAKEN (0 to 10). That's the only edit.
+  var SPOTS_TOTAL = 10;
+  var SPOTS_TAKEN = 0;
+  (function(){
+    var wrap = document.getElementById('rrr-pips'); if(!wrap) return;
+    var taken = Math.min(SPOTS_TOTAL, Math.max(0, SPOTS_TAKEN));
+    var open = SPOTS_TOTAL - taken;
+    for(var i=0;i<SPOTS_TOTAL;i++){
+      var p = document.createElement('span');
+      p.className = 'pip' + (i < taken ? ' taken' : '');
+      wrap.appendChild(p);
+    }
+    var left = document.getElementById('rrr-spots-left'); if(left) left.textContent = open;
+    var tot = document.getElementById('rrr-spots-total'); if(tot) tot.textContent = SPOTS_TOTAL;
+    if(open === 0){ var t = document.querySelector('.spots-text'); if(t) t.innerHTML = 'Founding cohort full'; }
+  })();
+
   (function(){
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var els = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
