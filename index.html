@@ -173,8 +173,11 @@
   .tier{border:1px solid var(--line);border-radius:var(--r-card);padding:30px 28px;background:var(--bg-2);display:flex;flex-direction:column;gap:18px}
   .tier.feature{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 24px 60px rgba(233,185,120,.10);background:var(--bg-3)}
   .tier .name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:18px}
-  .tier .fee{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:38px;letter-spacing:-.02em}
-  .tier .fee span{font-size:15px;font-weight:400;color:var(--ink-3)}
+  .tier .fee{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:38px;letter-spacing:-.02em;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .tier .fee .up{font-size:15px;font-weight:400;color:var(--ink-3)}
+  .tier .fee .was{font-size:22px;font-weight:500;color:var(--ink-3);text-decoration:line-through;text-decoration-color:rgba(189,177,162,.5)}
+  .tier .foundingtag{font-family:'Space Grotesk',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.02em;color:var(--gold-deep);margin-top:-8px}
+  .foundingpill{display:inline-block;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:12.5px;letter-spacing:.02em;color:var(--on-gold);background:var(--gold);padding:6px 15px;border-radius:var(--r-pill);margin-bottom:16px}
   .tier .desc{color:var(--ink-2);font-size:14px;margin:0}
   .tier ul{list-style:none;margin:0;padding:0;display:grid;gap:11px}
   .tier li{display:flex;gap:10px;font-size:14px;color:var(--ink-2)}
@@ -331,12 +334,15 @@
   <section class="sec" id="pricing">
     <div class="wrap">
       <div class="sec-head reveal">
+        <span class="foundingpill">Founding pricing · first 10 clients</span>
         <h2 class="h2">Pick how much you want off your plate.</h2>
+        <p class="lead">The first 10 founding clients get a founding rate, in exchange for candid feedback and, if you love the result, a testimonial. Your rate is locked for this launch. After the first 10, pricing returns to standard.</p>
       </div>
       <div class="tiers">
         <div class="tier reveal">
           <div class="name">The Setup</div>
-          <div class="fee">$1,997</div>
+          <div class="fee"><span class="was">$1,997</span>$1,497</div>
+          <div class="foundingtag">Founding rate</div>
           <p class="desc">We build the system; you run the launch.</p>
           <ul>
             <li><i class="ph ph-check"></i>Tracker plus all three pages, in your brand</li>
@@ -349,7 +355,8 @@
         <div class="tier feature reveal">
           <span class="flag">Most chosen</span>
           <div class="name">The Launch</div>
-          <div class="fee">$4,997</div>
+          <div class="fee"><span class="was">$4,997</span>$3,997</div>
+          <div class="foundingtag">Founding rate</div>
           <p class="desc">The system, plus a strategist in your corner.</p>
           <ul>
             <li><i class="ph ph-check"></i>Everything in The Setup</li>
@@ -361,7 +368,8 @@
         </div>
         <div class="tier reveal">
           <div class="name">The Full Launch</div>
-          <div class="fee">$9,997<span> and up</span></div>
+          <div class="fee"><span class="was">$9,997</span>$7,997<span class="up">and up</span></div>
+          <div class="foundingtag">Founding rate</div>
           <p class="desc">You show up and be the author.</p>
           <ul>
             <li><i class="ph ph-check"></i>Everything in The Launch</li>
