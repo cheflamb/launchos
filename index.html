@@ -111,6 +111,8 @@
   .sec-head{margin-bottom:48px;max-width:60ch}
   .sec-head .eyebrow{display:block;margin-bottom:14px}
   .sec-head .h2{margin-bottom:14px}
+  .sec-head.center{margin-left:auto;margin-right:auto;text-align:center}
+  .sec-head.center .lead{margin-left:auto;margin-right:auto}
 
   /* ---------- bento ---------- */
   .bento{display:grid;grid-template-columns:repeat(6,1fr);gap:18px}
@@ -129,10 +131,10 @@
   .tile.gold{background:linear-gradient(150deg,var(--gold) 0%,var(--gold-deep) 100%);border-color:transparent;color:var(--on-gold)}
   .tile.gold h3{color:var(--on-gold)} .tile.gold p{color:rgba(26,19,12,.82)}
   .tile.gold .ico{background:rgba(26,19,12,.14);border-color:rgba(26,19,12,.2)} .tile.gold .ico i{color:var(--on-gold)}
-  .tile.shot-tile{padding:0;min-height:230px}
+  .tile.shot-tile{padding:0;min-height:300px}
   .tile.shot-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center}
-  .tile.shot-tile .label{position:absolute;left:0;right:0;bottom:0;padding:20px 22px;z-index:2;
-    background:linear-gradient(180deg,rgba(22,17,14,0) 0%,rgba(22,17,14,.92) 78%)}
+  .tile.shot-tile .label{position:absolute;left:0;right:0;bottom:0;padding:46px 22px 20px;z-index:2;
+    background:linear-gradient(180deg,rgba(22,17,14,0) 0%,rgba(22,17,14,.6) 44%,rgba(22,17,14,.97) 100%)}
   .tile.shot-tile .label h3{font-size:18px;display:flex;align-items:center;gap:6px} .tile.shot-tile .label p{font-size:13.5px;color:var(--ink-2)}
   .tile.shot-tile .label h3 i{font-size:15px;color:var(--gold)}
   .tile.voice{border-color:rgba(233,185,120,.42)}
@@ -194,6 +196,11 @@
   .cta-band .wrap{position:relative}
   .cta-band .h2{margin-bottom:16px}
   .cta-band .lead{margin:0 auto 32px;text-align:center}
+  .cta-band .guarantee{display:flex;align-items:center;gap:14px;justify-content:center;text-align:left;
+    max-width:600px;margin:36px auto 0;padding:16px 22px;border:1px solid var(--line);border-radius:var(--r-card);background:var(--bg-2)}
+  .cta-band .guarantee i{font-size:26px;color:var(--gold);flex:none}
+  .cta-band .guarantee p{margin:0;font-size:14px;color:var(--ink-2);line-height:1.5}
+  .cta-band .guarantee strong{color:var(--ink);font-weight:600}
 
   /* ---------- footer ---------- */
   footer{border-top:1px solid var(--line);padding:40px 0;color:var(--ink-3);font-size:13.5px}
@@ -262,26 +269,26 @@
       <div class="bento">
         <a class="tile t-half shot-tile reveal" href="https://cheflamb.github.io/rrr-launch/" target="_blank" rel="noopener">
           <img src="assets/shot-landing.jpg" alt="The public book landing page, live">
-          <div class="label"><h3>The landing page <i class="ph ph-arrow-up-right"></i></h3><p>Your book sales page, in your brand. The public front door.</p></div>
+          <div class="label"><h3>The landing page <i class="ph ph-arrow-up-right"></i></h3><p>Your public book sales page.</p></div>
         </a>
         <a class="tile t-half shot-tile reveal" href="https://cheflamb.github.io/rrr4/" target="_blank" rel="noopener">
           <img src="assets/shot-tracker.jpg" alt="The live team launch tracker, running">
-          <div class="label"><h3>The team tracker <i class="ph ph-arrow-up-right"></i></h3><p>A shared dashboard your whole team runs the launch from.</p></div>
+          <div class="label"><h3>The team tracker <i class="ph ph-arrow-up-right"></i></h3><p>Your team's live launch dashboard.</p></div>
         </a>
-        <a class="tile t-third shot-tile reveal" href="https://cheflamb.github.io/rrr-launch/hub/?k=rrr-reader" target="_blank" rel="noopener">
+        <a class="tile t-half shot-tile reveal" href="https://cheflamb.github.io/rrr-launch/hub/?k=rrr-reader" target="_blank" rel="noopener">
           <img src="assets/shot-hub.jpg" alt="The gated buyer bonus hub, live">
           <div class="label"><h3>The bonus hub <i class="ph ph-arrow-up-right"></i></h3><p>Welcomes buyers, feeds your funnel.</p></div>
         </a>
-        <a class="tile t-third shot-tile reveal" href="https://cheflamb.github.io/rrr-launch/partners/?k=rrr-partner" target="_blank" rel="noopener">
+        <a class="tile t-half shot-tile reveal" href="https://cheflamb.github.io/rrr-launch/partners/?k=rrr-partner" target="_blank" rel="noopener">
           <img src="assets/shot-partners.jpg" alt="The gated JV partner hub, live">
-          <div class="label"><h3>The partner hub <i class="ph ph-arrow-up-right"></i></h3><p>Swipe and assets partners use in five minutes.</p></div>
+          <div class="label"><h3>The partner hub <i class="ph ph-arrow-up-right"></i></h3><p>Swipe and assets for partners.</p></div>
         </a>
-        <div class="tile t-third voice reveal">
+        <div class="tile t-half voice reveal">
           <div class="ico"><i class="ph ph-pen-nib"></i></div>
           <h3>The copy kit</h3>
           <p>Launch emails and swipe copy, written <span class="gold">in your voice</span>. Never generic AI slop.</p>
         </div>
-        <div class="tile t-full reveal">
+        <div class="tile t-half reveal">
           <div class="ico"><i class="ph ph-target"></i></div>
           <h3>The methodology, built in</h3>
           <p>The concentrated buy-day strategy is baked into every task and template, so your team runs a proven launch instead of guessing.</p>
@@ -333,7 +340,7 @@
   <!-- ===== PRICING ===== -->
   <section class="sec" id="pricing">
     <div class="wrap">
-      <div class="sec-head reveal">
+      <div class="sec-head center reveal">
         <span class="foundingpill">Founding pricing · first 10 clients</span>
         <h2 class="h2">Pick how much you want off your plate.</h2>
         <p class="lead">The first 10 founding clients get a founding rate, in exchange for candid feedback and, if you love the result, a testimonial. Your rate is locked for this launch. After the first 10, pricing returns to standard.</p>
@@ -389,6 +396,10 @@
       <h2 class="h2">Ready for a launch that's actually engineered?</h2>
       <p class="lead">Book a 30-minute strategy call. We will map your buy-day and show you the whole system, live.</p>
       <a class="btn btn-primary" href="https://cheflifemedia.com/?fluent-booking=calendar&amp;host=tnnlkafmtide&amp;event=30min" target="_blank" rel="noopener"><i class="ph ph-phone-call"></i>Book a call</a>
+      <div class="guarantee">
+        <i class="ph ph-seal-check"></i>
+        <p><strong>The Launch-Ready Guarantee.</strong> We deliver your complete, working launch system and have you launch-ready by your target date, or we keep working at no extra cost until you are.</p>
+      </div>
     </div>
   </section>
 
