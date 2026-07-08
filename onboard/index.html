@@ -53,6 +53,11 @@
   .field.invalid input,.field.invalid textarea,.field.invalid select{border-color:var(--err)}
   .field .errmsg{display:none;color:var(--err);font-size:13px;margin-top:6px}
   .field.invalid .errmsg{display:block}
+  input[type=file]{padding:11px 14px;color:var(--ink-2);font-size:14px;cursor:pointer}
+  input[type=file]::file-selector-button{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;color:var(--on-gold);background:var(--gold);border:none;border-radius:8px;padding:9px 15px;margin-right:12px;cursor:pointer}
+  input[type=file]::file-selector-button:hover{background:var(--gold-deep)}
+  .fstatus{font-size:13px;margin-top:8px;min-height:16px}
+  .fstatus.up{color:var(--ink-3)} .fstatus.ok{color:var(--gold)} .fstatus.err{color:var(--err)}
 
   .checks{display:grid;gap:10px}
   .check{display:flex;align-items:center;gap:11px;background:var(--bg-2);border:1px solid var(--line-2);border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:border-color .15s}
@@ -138,14 +143,15 @@
         {n:'brand_colors', l:'Brand colors', type:'text', help:'Hex if you know them: primary, accent, background.'},
         {n:'brand_fonts', l:'Fonts', type:'text', help:'Or write "match my site: [URL]."'},
         {n:'vibe', l:'Your vibe in three words', type:'text'},
-        {n:'logo_link', l:'Logo', type:'text', help:'Paste a link, or send it by reply later.'}
+        {n:'logo', l:'Logo', type:'file', accept:'image/png,image/jpeg,image/webp,image/svg+xml', opt:true, help:'PNG, JPG, or SVG. Or skip and send it later.'},
+        {n:'cover', l:'Book cover', type:'file', accept:'image/png,image/jpeg,image/webp', opt:true, help:'Upload it if you have it. Skip if it is not final yet.'}
       ]},
     { key:'proof', eyebrow:'Proof', title:'Who vouches for you?', intro:'Real quotes convert. Send what you have now, add more later.',
       fields:[
         {n:'testimonials', l:'2 or 3 testimonials', type:'textarea', opt:true, help:'Quote + first name + location.'},
         {n:'endorsement', l:'Any endorsement from a known name', type:'textarea', opt:true},
         {n:'bio', l:'Your bio', type:'textarea', help:'2 or 3 sentences.'},
-        {n:'headshot_link', l:'Author headshot', type:'text', help:'Link, or send by reply.'}
+        {n:'headshot', l:'Author headshot', type:'file', accept:'image/png,image/jpeg,image/webp', opt:true, help:'A high-res photo. Or send it later.'}
       ]},
     { key:'bonuses', eyebrow:'The bonus stack', title:'What comes with buying on day one?', intro:'Up to three gifts that make buying on launch day irresistible. Rough ideas are fine.',
       fields:[
@@ -189,6 +195,8 @@
 
   function save(){ try{ localStorage.setItem(STORE, JSON.stringify({data:data, step:stepIdx})); }catch(e){} }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function isFile(v){ return v && typeof v === 'object' && !Array.isArray(v) && v.name; }
+  function valDisp(v){ if(isFile(v)) return v.name + ' (uploaded)'; return Array.isArray(v) ? v.join(', ') : (v || ''); }
 
   function setProgress(){
     var pct;
@@ -217,6 +225,10 @@
         var on = arr.indexOf(o) > -1;
         return '<label class="check'+(on?' on':'')+'"><input type="checkbox" data-n="'+f.n+'" value="'+esc(o)+'"'+(on?' checked':'')+'><span>'+esc(o)+'</span></label>';
       }).join('')+'</div>';
+    } else if(f.type === 'file'){
+      var fv = (val && typeof val === 'object' && val.name) ? val : null;
+      input = '<input type="file" data-n="'+f.n+'"'+(f.accept?' accept="'+f.accept+'"':'')+'>'+
+        '<div class="fstatus'+(fv?' ok':'')+'" data-fstatus="'+f.n+'">'+(fv?('Uploaded: '+esc(fv.name)):'')+'</div>';
     } else {
       input = '<input type="'+(f.type||'text')+'" data-n="'+f.n+'" value="'+esc(val)+'"'+(f.type==='email'?' inputmode="email"':'')+'>';
     }
@@ -264,11 +276,29 @@
           else { arr = arr.filter(function(x){return x!==el.value;}); }
           data[n] = arr; el.closest('.check').classList.toggle('on', el.checked); save();
         });
+      } else if(el.type === 'file'){
+        el.addEventListener('change', function(){ if(el.files && el.files[0]) uploadFile(el.files[0], n); });
       } else {
         el.addEventListener('input', function(){ data[n] = el.value; save();
           var fld = el.closest('.field'); if(fld) fld.classList.remove('invalid'); });
       }
     });
+  }
+
+  function uploadFile(file, n){
+    var st = card.querySelector('[data-fstatus="'+n+'"]');
+    if(st){ st.className = 'fstatus up'; st.textContent = 'Uploading ' + file.name + '...'; }
+    var folder = (CLIENT_SLUG || 'general').replace(/[^a-z0-9_-]/gi, '_');
+    var safe = file.name.replace(/[^a-z0-9._-]/gi, '_');
+    var path = folder + '/' + Date.now() + '-' + Math.random().toString(36).slice(2,8) + '-' + safe;
+    fetch(SUPABASE_URL + '/storage/v1/object/los-uploads/' + path, {
+      method:'POST',
+      headers:{ 'apikey':SUPABASE_KEY, 'Authorization':'Bearer '+SUPABASE_KEY, 'Content-Type': file.type || 'application/octet-stream', 'x-upsert':'false' },
+      body: file
+    }).then(function(r){
+      if(r.ok){ data[n] = { name:file.name, path:path }; save(); if(st){ st.className='fstatus ok'; st.textContent='Uploaded: ' + file.name; } }
+      else { throw new Error('status ' + r.status); }
+    }).catch(function(){ if(st){ st.className='fstatus err'; st.textContent='That upload did not go through. Try again, or send the file by reply.'; } });
   }
 
   function validateStep(s){
@@ -296,7 +326,7 @@
     STEPS.forEach(function(s){
       html += '<div class="review-sec">'+esc(s.eyebrow)+'</div><div class="review">';
       s.fields.forEach(function(f){
-        var v = data[f.n]; var disp = Array.isArray(v) ? v.join(', ') : (v||'');
+        var disp = valDisp(data[f.n]);
         html += '<div class="row"><div class="rk">'+esc(f.l)+'</div><div class="rv'+(disp?'':' empty')+'">'+(disp?esc(disp):'Not yet')+'</div></div>';
       });
       html += '</div>';
@@ -317,7 +347,9 @@
     STEPS.forEach(function(s){
       var lines = [];
       s.fields.forEach(function(f){
-        var v = data[f.n]; var disp = Array.isArray(v) ? v.join(', ') : (v||'');
+        var v = data[f.n]; var disp;
+        if(isFile(v)) disp = v.name + '  (file: los-uploads/' + v.path + ')';
+        else disp = Array.isArray(v) ? v.join(', ') : (v || '');
         if(disp && String(disp).trim()) lines.push('- **' + f.l + ':** ' + disp);
       });
       if(lines.length){ out.push('## ' + s.eyebrow, lines.join('\n'), ''); }
