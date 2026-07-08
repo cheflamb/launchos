@@ -350,6 +350,30 @@
   }
 
   // ===== SUBMIT =====
+  // Client-provided essentials we can't invent. If blank at submit, they become "outstanding asks."
+  var ASKS = [
+    { f:'testimonials', ask:'2 or 3 reader testimonials (quote + first name + location)' },
+    { f:'bio',          ask:'your author bio (2 or 3 sentences)' },
+    { f:'headshot',     ask:'a high-res author headshot' },
+    { f:'logo',         ask:'your logo' },
+    { f:'cover',        ask:'your book cover file' },
+    { f:'bonus1',       ask:'your launch bonus stack (up to 3 gifts buyers get on day one)' },
+    { f:'buy_link',     ask:'your buy link, once the book is live on Amazon', tbd:true }
+  ];
+  function isBlank(v, tbd){
+    if(v && typeof v === 'object' && !Array.isArray(v)) return !v.name;
+    if(Array.isArray(v)) return v.length === 0;
+    var s = (v == null ? '' : String(v)).trim();
+    if(!s) return true;
+    if(tbd && /^tbd$|not sure|not yet|none yet/i.test(s)) return true;
+    return false;
+  }
+  function computeOutstanding(){
+    var list = [];
+    ASKS.forEach(function(a){ if(isBlank(data[a.f], a.tbd)) list.push(a.ask); });
+    return list;
+  }
+
   function buildBrief(){
     var out = ['# Launch OS onboarding brief', ''];
     if(CLIENT_SLUG) out.push('_Client: ' + CLIENT_SLUG + '_', '');
@@ -363,6 +387,11 @@
       });
       if(lines.length){ out.push('## ' + s.eyebrow, lines.join('\n'), ''); }
     });
+    var pending = computeOutstanding();
+    if(pending.length){
+      out.push('## Still outstanding (ask the client for these)',
+        pending.map(function(x){ return '- ' + x; }).join('\n'), '');
+    }
     return out.join('\n');
   }
 
@@ -378,7 +407,7 @@
       book_title: data.book_title || null,
       launch_date: data.launch_date || null,
       status: 'submitted',
-      answers: data,
+      answers: Object.assign({}, data, { _outstanding: computeOutstanding() }),
       brief_md: buildBrief()
     };
     fetch(SUPABASE_URL + '/rest/v1/los_intakes', {
@@ -400,7 +429,7 @@
     card.innerHTML =
       '<div class="confirm-icon">🌅</div>'+
       '<h2 class="q-title">Got it'+(first?', '+esc(first):'')+'. Thank you.</h2>'+
-      '<p class="q-intro">Your brief is in. Here is what happens next: I build your launch system in your brand and voice, then send you a link to review everything live, usually within a few days. If you have files to send (cover, logo, testimonials), just reply to my email anytime.</p>'+
+      '<p class="q-intro">Your brief is in. Here is what happens next: I build your launch system in your brand and voice, then send you a link to review everything live, usually within a few days. If you have files to send (cover, logo, testimonials), email them to <a href="mailto:adam@cheflifemedia.com">adam@cheflifemedia.com</a> anytime.</p>'+
       '<p class="q-intro" style="color:var(--ink-3);font-size:14px">Haven’t had your discovery call yet? <a href="'+BOOKING_URL+'" target="_blank" rel="noopener">Book it here</a>.</p>';
     navEl.innerHTML = '<span></span><a class="btn btn-primary" href="https://launchos.cheflifemedia.com/">Back to Launch OS</a>';
     document.getElementById('savenote').textContent = 'Submitted';
