@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Launch OS: Onboarding</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9A%80%3C/text%3E%3C/svg%3E">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter+Tight:wght@400;500;600&display=swap');
+  :root{
+    --bg:#16110E; --bg-2:#1D1712; --bg-3:#241C16;
+    --line:rgba(245,239,230,.12); --line-2:rgba(245,239,230,.20);
+    --ink:#F5EFE6; --ink-2:#BDB1A2; --ink-3:#8B7F70;
+    --gold:#E9B978; --gold-deep:#E4A24A; --on-gold:#1A130C;
+    --err:#E28B7A; --ok:#8FCf9f;
+    --r:12px; --r-pill:999px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);min-height:100%}
+  body{font-family:'Inter Tight',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:660px;margin:0 auto;padding:28px 22px 80px;min-height:100dvh;display:flex;flex-direction:column}
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif;letter-spacing:-.02em;margin:0}
+  a{color:var(--gold)}
+
+  /* header / progress */
+  .top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:26px}
+  .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px}
+  .brand b{color:var(--gold)}
+  .savenote{font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--ink-3);letter-spacing:.02em}
+  .bar{height:6px;border-radius:var(--r-pill);background:var(--bg-3);overflow:hidden;margin-bottom:6px}
+  .bar>i{display:block;height:100%;width:0;border-radius:var(--r-pill);background:linear-gradient(90deg,var(--gold-deep),var(--gold));transition:width .4s cubic-bezier(.16,1,.3,1)}
+  .stepcount{font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:30px}
+
+  .card{flex:1}
+  .eyebrow{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:14px}
+  .q-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(26px,4.5vw,34px);line-height:1.1;margin-bottom:12px}
+  .q-intro{color:var(--ink-2);font-size:16px;margin-bottom:28px;max-width:52ch}
+
+  .field{margin-bottom:22px}
+  .field label.l{display:block;font-weight:600;font-size:15px;margin-bottom:7px}
+  .field .req{color:var(--gold)}
+  .field .opt{color:var(--ink-3);font-weight:400;font-size:13px}
+  .field .help{font-size:13px;color:var(--ink-3);margin-top:6px;line-height:1.45}
+  input,textarea,select{
+    width:100%;font-family:'Inter Tight',sans-serif;font-size:16px;color:var(--ink);
+    background:var(--bg-2);border:1px solid var(--line-2);border-radius:var(--r);padding:13px 15px;
+  }
+  input::placeholder,textarea::placeholder{color:#6E6456}
+  textarea{min-height:96px;resize:vertical}
+  select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23BDB1A2' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px center;padding-right:38px}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(233,185,120,.16)}
+  .field.invalid input,.field.invalid textarea,.field.invalid select{border-color:var(--err)}
+  .field .errmsg{display:none;color:var(--err);font-size:13px;margin-top:6px}
+  .field.invalid .errmsg{display:block}
+
+  .checks{display:grid;gap:10px}
+  .check{display:flex;align-items:center;gap:11px;background:var(--bg-2);border:1px solid var(--line-2);border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:border-color .15s}
+  .check:hover{border-color:var(--line-2)}
+  .check input{width:auto;accent-color:var(--gold-deep);width:18px;height:18px;flex:none}
+  .check span{font-size:15px}
+  .check.on{border-color:var(--gold);background:rgba(233,185,120,.07)}
+
+  /* nav */
+  .nav{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:34px}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;
+    border-radius:var(--r-pill);padding:13px 26px;cursor:pointer;border:1px solid transparent;transition:transform .15s ease,background .15s ease,border-color .15s ease}
+  .btn-primary{background:var(--gold);color:var(--on-gold)}
+  .btn-primary:hover{background:var(--gold-deep);transform:translateY(-1px)}
+  .btn-primary:disabled{opacity:.55;cursor:not-allowed;transform:none}
+  .btn-ghost{background:transparent;color:var(--ink-2);border-color:var(--line-2)}
+  .btn-ghost:hover{color:var(--ink);border-color:var(--line-2)}
+  .btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+  /* intro + confirm + review */
+  .lede{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(30px,6vw,46px);line-height:1.05;margin-bottom:18px}
+  .lede b{color:var(--gold)}
+  .intro-p{color:var(--ink-2);font-size:17px;margin-bottom:16px;max-width:54ch}
+  .facts{display:flex;gap:22px;flex-wrap:wrap;margin:24px 0 34px}
+  .fact{font-size:14px;color:var(--ink-2)}
+  .fact b{display:block;font-family:'Space Grotesk',sans-serif;color:var(--gold);font-size:20px;font-weight:600}
+  .review{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);padding:6px 20px;margin-bottom:8px}
+  .review .row{padding:13px 0;border-bottom:1px solid var(--line)}
+  .review .row:last-child{border-bottom:none}
+  .review .rk{font-size:12px;letter-spacing:.04em;color:var(--ink-3);text-transform:uppercase;font-family:'Space Grotesk',sans-serif}
+  .review .rv{font-size:15px;color:var(--ink);margin-top:3px;white-space:pre-wrap}
+  .review .rv.empty{color:var(--ink-3);font-style:italic}
+  .review-sec{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;color:var(--gold);margin:24px 0 8px}
+  .toast{color:var(--err);font-size:14px;margin-top:14px;min-height:18px}
+  .confirm-icon{font-size:40px;margin-bottom:16px}
+  @media(max-width:560px){ .nav .btn{padding:12px 20px;font-size:14px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">Launch<b>OS</b></div>
+    <div class="savenote" id="savenote">Your progress saves automatically</div>
+  </div>
+  <div class="bar"><i id="bar"></i></div>
+  <div class="stepcount" id="stepcount"></div>
+  <div class="card" id="card"></div>
+  <div class="nav" id="nav"></div>
+</div>
+
+<script>
+(function(){
+  // ===== CONFIG =====
+  var SUPABASE_URL = 'https://sqwwxrlyepbufsikweez.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_ohGJPQXTGXsmPTmqJt98eQ_QptOxnSf';
+  var BOOKING_URL  = 'https://thecheflifebrigade.com/?fluent-booking=calendar&host=adammlamb&event=launchos';
+  var STORE = 'losOnboardV1';
+
+  // ===== STEPS (field-parity with 04-client-intake.md) =====
+  var STEPS = [
+    { key:'basics', eyebrow:'The basics', title:'Let’s start with your book.', intro:'A few essentials. The only must-haves to begin are your name, the title, and a launch date. Everything else can be rough.',
+      fields:[
+        {n:'author_name', l:'Your name or brand', type:'text', req:true},
+        {n:'book_title', l:'Book (or offer) title', type:'text', req:true},
+        {n:'subtitle', l:'Subtitle or tagline', type:'text'},
+        {n:'description', l:'One-sentence description', type:'textarea'},
+        {n:'formats', l:'Format(s)', type:'checks', options:['eBook','Paperback','Audiobook','Course / offer']},
+        {n:'launch_date', l:'Launch / buy date', type:'text', req:true, help:'A date, a rough window, or "not sure yet."'},
+        {n:'buy_link', l:'Where to buy / buy link', type:'text', help:'Paste the link, or write "TBD."'}
+      ]},
+    { key:'message', eyebrow:'Your message', title:'What’s the heart of it?', intro:'This is what your whole launch says in your voice. Rough notes are perfect.',
+      fields:[
+        {n:'core_message', l:'Your core message (the one big idea)', type:'textarea', req:true},
+        {n:'taglines', l:'2 or 3 taglines', type:'textarea', opt:true},
+        {n:'reader', l:'Who is your reader?', type:'textarea', help:'Who they are, and what they’re struggling with.'},
+        {n:'tried', l:'What have they tried that did not work?', type:'textarea', opt:true},
+        {n:'want', l:'What do they secretly want?', type:'textarea', opt:true},
+        {n:'different', l:'What makes your book different?', type:'textarea', opt:true}
+      ]},
+    { key:'brand', eyebrow:'The look', title:'How should it feel?', intro:'We build your pages in your brand. Give us whatever you have.',
+      fields:[
+        {n:'brand_ref', l:'A website whose look you love', type:'text', help:'Paste a URL for reference.'},
+        {n:'brand_colors', l:'Brand colors', type:'text', help:'Hex if you know them: primary, accent, background.'},
+        {n:'brand_fonts', l:'Fonts', type:'text', help:'Or write "match my site: [URL]."'},
+        {n:'vibe', l:'Your vibe in three words', type:'text'},
+        {n:'logo_link', l:'Logo', type:'text', help:'Paste a link, or send it by reply later.'}
+      ]},
+    { key:'proof', eyebrow:'Proof', title:'Who vouches for you?', intro:'Real quotes convert. Send what you have now, add more later.',
+      fields:[
+        {n:'testimonials', l:'2 or 3 testimonials', type:'textarea', opt:true, help:'Quote + first name + location.'},
+        {n:'endorsement', l:'Any endorsement from a known name', type:'textarea', opt:true},
+        {n:'bio', l:'Your bio', type:'textarea', help:'2 or 3 sentences.'},
+        {n:'headshot_link', l:'Author headshot', type:'text', help:'Link, or send by reply.'}
+      ]},
+    { key:'bonuses', eyebrow:'The bonus stack', title:'What comes with buying on day one?', intro:'Up to three gifts that make buying on launch day irresistible. Rough ideas are fine.',
+      fields:[
+        {n:'bonus1', l:'Bonus 1 (name + what it is)', type:'text', opt:true},
+        {n:'bonus2', l:'Bonus 2', type:'text', opt:true},
+        {n:'bonus3', l:'Bonus 3', type:'text', opt:true},
+        {n:'bonus_deadline', l:'When does the bonus offer close?', type:'text', opt:true},
+        {n:'live_call', l:'Live launch-week call: date + registration link', type:'text', opt:true}
+      ]},
+    { key:'partners', eyebrow:'The partner engine', title:'Who can help you spread the word?', intro:'JV partners mailing on buy-day is the biggest lever. Even a rough count helps.',
+      fields:[
+        {n:'partners_have', l:'Do you have launch partners?', type:'select', options:['Yes, a few','Yes, a strong network','Not yet','Need help building this']},
+        {n:'partners_count', l:'Roughly how many, and their combined reach?', type:'text', opt:true},
+        {n:'partner_email', l:'Best email for partner coordination', type:'email', opt:true}
+      ]},
+    { key:'kdp', eyebrow:'Amazon mechanics', title:'Where are you with Amazon?', intro:'Skip anything that does not apply. "Need guidance" is a perfectly good answer.',
+      fields:[
+        {n:'kdp_ready', l:'KDP account ready?', type:'select', options:['Ready','Not yet','Need guidance']},
+        {n:'isbn', l:'ISBN status', type:'text', opt:true},
+        {n:'categories', l:'Target categories', type:'text', opt:true, help:'Or write "need research."'},
+        {n:'price', l:'Launch price', type:'text', opt:true},
+        {n:'cover_status', l:'Cover status', type:'select', options:['Final','In progress','Not started']}
+      ]},
+    { key:'access', eyebrow:'Access & assets', title:'Last few things.', intro:'How we reach you, who is on your team, and what assets are ready.',
+      fields:[
+        {n:'contact_email', l:'Best contact email for you', type:'email', req:true},
+        {n:'team', l:'Anyone else who needs tracker access?', type:'text', opt:true, help:'Names are fine.'},
+        {n:'assets_ready', l:'Which assets are ready?', type:'checks', options:['Cover','Bonus PDFs','Audio','Quote graphics','Social images'], help:'Send the rest by reply, no rush.'}
+      ]}
+  ];
+
+  // ===== STATE =====
+  var data = {}, stepIdx = -1, submitting = false, done = false;
+  try { var saved = JSON.parse(localStorage.getItem(STORE) || '{}'); data = saved.data || {}; if(typeof saved.step === 'number') stepIdx = saved.step; } catch(e){}
+  var params = new URLSearchParams(location.search);
+  var CLIENT_SLUG = (params.get('client') || '').trim();
+
+  var card = document.getElementById('card'), navEl = document.getElementById('nav');
+  var barEl = document.getElementById('bar'), stepCountEl = document.getElementById('stepcount');
+  var TOTAL = STEPS.length; // content steps; plus intro(-1), review(TOTAL), confirm
+
+  function save(){ try{ localStorage.setItem(STORE, JSON.stringify({data:data, step:stepIdx})); }catch(e){} }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+  function setProgress(){
+    var pct;
+    if(stepIdx < 0) pct = 0;
+    else if(stepIdx >= TOTAL) pct = 100;
+    else pct = Math.round(((stepIdx) / TOTAL) * 100);
+    barEl.style.width = pct + '%';
+    if(stepIdx < 0 || stepIdx >= TOTAL || done) stepCountEl.textContent = '';
+    else stepCountEl.textContent = 'Step ' + (stepIdx+1) + ' of ' + TOTAL;
+  }
+
+  function fieldHTML(f){
+    var val = data[f.n];
+    var reqMark = f.req ? ' <span class="req">*</span>' : (f.opt ? ' <span class="opt">(optional)</span>' : '');
+    var help = f.help ? '<div class="help">'+esc(f.help)+'</div>' : '';
+    var err = '<div class="errmsg">This one’s needed to get started.</div>';
+    var input;
+    if(f.type === 'textarea'){
+      input = '<textarea data-n="'+f.n+'">'+esc(val)+'</textarea>';
+    } else if(f.type === 'select'){
+      input = '<select data-n="'+f.n+'"><option value="">Choose one</option>'+
+        f.options.map(function(o){return '<option'+(val===o?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select>';
+    } else if(f.type === 'checks'){
+      var arr = Array.isArray(val) ? val : [];
+      input = '<div class="checks">'+f.options.map(function(o){
+        var on = arr.indexOf(o) > -1;
+        return '<label class="check'+(on?' on':'')+'"><input type="checkbox" data-n="'+f.n+'" value="'+esc(o)+'"'+(on?' checked':'')+'><span>'+esc(o)+'</span></label>';
+      }).join('')+'</div>';
+    } else {
+      input = '<input type="'+(f.type||'text')+'" data-n="'+f.n+'" value="'+esc(val)+'"'+(f.type==='email'?' inputmode="email"':'')+'>';
+    }
+    return '<div class="field" data-field="'+f.n+'"><label class="l">'+esc(f.l)+reqMark+'</label>'+input+help+err+'</div>';
+  }
+
+  function render(){
+    setProgress();
+    // INTRO
+    if(stepIdx < 0){
+      card.innerHTML =
+        '<div class="eyebrow">Onboarding</div>'+
+        '<div class="lede">Let’s map <b>your launch</b>.</div>'+
+        '<p class="intro-p">This is the one thing I need to start building: a short walk through your book, your brand, and your launch. I use it to build your system in your voice, not a generic one.</p>'+
+        '<div class="facts"><div class="fact"><b>~15 min</b>and you can save and come back</div><div class="fact"><b>3 must-haves</b>title, launch date, your message</div><div class="fact"><b>~1 week</b>to your live launch system</div></div>';
+      navEl.innerHTML = '<span></span><button class="btn btn-primary" id="next">'+(hasProgress()?'Continue':'Begin')+'</button>';
+      document.getElementById('next').onclick = function(){ stepIdx = clampFirstIncomplete(); save(); render(); window.scrollTo(0,0); };
+      return;
+    }
+    // REVIEW
+    if(stepIdx >= TOTAL){ renderReview(); return; }
+    // A STEP
+    var s = STEPS[stepIdx];
+    card.innerHTML =
+      '<div class="eyebrow">'+esc(s.eyebrow)+'</div>'+
+      '<h2 class="q-title">'+esc(s.title)+'</h2>'+
+      (s.intro?'<p class="q-intro">'+esc(s.intro)+'</p>':'')+
+      s.fields.map(fieldHTML).join('')+
+      '<div class="toast" id="toast"></div>';
+    navEl.innerHTML =
+      '<button class="btn btn-ghost" id="back">Back</button>'+
+      '<button class="btn btn-primary" id="next">'+(stepIdx===TOTAL-1?'Review':'Next')+'</button>';
+    bindInputs();
+    document.getElementById('back').onclick = function(){ stepIdx--; save(); render(); window.scrollTo(0,0); };
+    document.getElementById('next').onclick = function(){ if(validateStep(s)){ stepIdx++; save(); render(); window.scrollTo(0,0); } };
+  }
+
+  function bindInputs(){
+    card.querySelectorAll('input,textarea,select').forEach(function(el){
+      var n = el.getAttribute('data-n');
+      if(el.type === 'checkbox'){
+        el.addEventListener('change', function(){
+          var arr = Array.isArray(data[n]) ? data[n].slice() : [];
+          if(el.checked){ if(arr.indexOf(el.value)<0) arr.push(el.value); }
+          else { arr = arr.filter(function(x){return x!==el.value;}); }
+          data[n] = arr; el.closest('.check').classList.toggle('on', el.checked); save();
+        });
+      } else {
+        el.addEventListener('input', function(){ data[n] = el.value; save();
+          var fld = el.closest('.field'); if(fld) fld.classList.remove('invalid'); });
+      }
+    });
+  }
+
+  function validateStep(s){
+    var firstBad = null;
+    s.fields.forEach(function(f){
+      var fld = card.querySelector('[data-field="'+f.n+'"]');
+      if(!fld) return;
+      var v = data[f.n];
+      var bad = f.req && (!v || !String(v).trim());
+      if(f.type === 'email' && v && String(v).trim() && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(v).trim())) bad = true;
+      fld.classList.toggle('invalid', !!bad);
+      if(bad && !firstBad) firstBad = fld;
+    });
+    if(firstBad){ firstBad.scrollIntoView({behavior:'smooth',block:'center'}); return false; }
+    return true;
+  }
+
+  function hasProgress(){ return Object.keys(data).some(function(k){ var v=data[k]; return Array.isArray(v)?v.length:(v&&String(v).trim()); }); }
+  function clampFirstIncomplete(){ return 0; }
+
+  // ===== REVIEW =====
+  function renderReview(){
+    var html = '<div class="eyebrow">Almost there</div><h2 class="q-title">One last look.</h2>'+
+      '<p class="q-intro">Anything blank is fine to leave for later. Edit any section by tapping Back, or send it over.</p>';
+    STEPS.forEach(function(s){
+      html += '<div class="review-sec">'+esc(s.eyebrow)+'</div><div class="review">';
+      s.fields.forEach(function(f){
+        var v = data[f.n]; var disp = Array.isArray(v) ? v.join(', ') : (v||'');
+        html += '<div class="row"><div class="rk">'+esc(f.l)+'</div><div class="rv'+(disp?'':' empty')+'">'+(disp?esc(disp):'Not yet')+'</div></div>';
+      });
+      html += '</div>';
+    });
+    html += '<div class="toast" id="toast"></div>';
+    card.innerHTML = html;
+    navEl.innerHTML =
+      '<button class="btn btn-ghost" id="back">Back</button>'+
+      '<button class="btn btn-primary" id="submit">Send my brief</button>';
+    document.getElementById('back').onclick = function(){ stepIdx = TOTAL-1; save(); render(); window.scrollTo(0,0); };
+    document.getElementById('submit').onclick = submit;
+  }
+
+  // ===== SUBMIT =====
+  function buildBrief(){
+    var out = ['# Launch OS onboarding brief', ''];
+    if(CLIENT_SLUG) out.push('_Client: ' + CLIENT_SLUG + '_', '');
+    STEPS.forEach(function(s){
+      var lines = [];
+      s.fields.forEach(function(f){
+        var v = data[f.n]; var disp = Array.isArray(v) ? v.join(', ') : (v||'');
+        if(disp && String(disp).trim()) lines.push('- **' + f.l + ':** ' + disp);
+      });
+      if(lines.length){ out.push('## ' + s.eyebrow, lines.join('\n'), ''); }
+    });
+    return out.join('\n');
+  }
+
+  function submit(){
+    if(submitting) return;
+    submitting = true;
+    var btn = document.getElementById('submit'); var toast = document.getElementById('toast');
+    btn.disabled = true; btn.textContent = 'Sending...'; toast.textContent = '';
+    var payload = {
+      client_slug: CLIENT_SLUG || null,
+      author_name: data.author_name || null,
+      contact_email: data.contact_email || null,
+      book_title: data.book_title || null,
+      launch_date: data.launch_date || null,
+      status: 'submitted',
+      answers: data,
+      brief_md: buildBrief()
+    };
+    fetch(SUPABASE_URL + '/rest/v1/los_intakes', {
+      method:'POST',
+      headers:{ 'apikey':SUPABASE_KEY, 'Authorization':'Bearer '+SUPABASE_KEY, 'Content-Type':'application/json', 'Prefer':'return=minimal' },
+      body: JSON.stringify(payload)
+    }).then(function(r){
+      if(r.ok){ done = true; try{ localStorage.removeItem(STORE); }catch(e){} renderConfirm(); window.scrollTo(0,0); }
+      else { throw new Error('status ' + r.status); }
+    }).catch(function(){
+      submitting = false; btn.disabled = false; btn.textContent = 'Send my brief';
+      toast.textContent = 'Something went wrong sending that. Your answers are still saved here. Please try again, or email adam@cheflifemedia.com.';
+    });
+  }
+
+  function renderConfirm(){
+    stepIdx = TOTAL; setProgress(); barEl.style.width = '100%'; stepCountEl.textContent = '';
+    var first = (data.author_name||'').trim().split(' ')[0];
+    card.innerHTML =
+      '<div class="confirm-icon">🌅</div>'+
+      '<h2 class="q-title">Got it'+(first?', '+esc(first):'')+'. Thank you.</h2>'+
+      '<p class="q-intro">Your brief is in. Here is what happens next: I build your launch system in your brand and voice, then send you a link to review everything live, usually within a few days. If you have files to send (cover, logo, testimonials), just reply to my email anytime.</p>'+
+      '<p class="q-intro" style="color:var(--ink-3);font-size:14px">Haven’t had your discovery call yet? <a href="'+BOOKING_URL+'" target="_blank" rel="noopener">Book it here</a>.</p>';
+    navEl.innerHTML = '<span></span><a class="btn btn-primary" href="https://launchos.cheflifemedia.com/">Back to Launch OS</a>';
+    document.getElementById('savenote').textContent = 'Submitted';
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
