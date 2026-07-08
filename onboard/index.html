@@ -425,7 +425,8 @@
 
   function renderConfirm(){
     stepIdx = TOTAL; setProgress(); barEl.style.width = '100%'; stepCountEl.textContent = '';
-    var first = (data.author_name||'').trim().split(' ')[0];
+    var first = (data.author_name||'').trim().split(/\s+/)[0];
+    if(/^(the|a|an|my|our|team|brand)$/i.test(first)) first = '';  // brand-led name, skip the greeting name
     card.innerHTML =
       '<div class="confirm-icon">🌅</div>'+
       '<h2 class="q-title">Got it'+(first?', '+esc(first):'')+'. Thank you.</h2>'+
