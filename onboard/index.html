@@ -114,7 +114,9 @@
   var SUPABASE_URL = 'https://sqwwxrlyepbufsikweez.supabase.co';
   var SUPABASE_KEY = 'sb_publishable_ohGJPQXTGXsmPTmqJt98eQ_QptOxnSf';
   var BOOKING_URL  = 'https://thecheflifebrigade.com/?fluent-booking=calendar&host=adammlamb&event=launchos';
+  var FORM_CODE = 'letsbuild';   // access code; the emailed link carries it as ?k=letsbuild
   var STORE = 'losOnboardV1';
+  var GATE_STORE = 'losOnboardUnlocked';
 
   // ===== STEPS (field-parity with 04-client-intake.md) =====
   var STEPS = [
@@ -127,6 +129,13 @@
         {n:'formats', l:'Format(s)', type:'checks', options:['eBook','Paperback','Audiobook','Course / offer']},
         {n:'launch_date', l:'Launch / buy date', type:'text', req:true, help:'A date, a rough window, or "not sure yet."'},
         {n:'buy_link', l:'Where to buy / buy link', type:'text', help:'Paste the link, or write "TBD."'}
+      ]},
+    { key:'voice', eyebrow:'Your voice', title:'Help us sound like you.', intro:'This is how we build in your voice instead of a generic one. Give us whatever shows how you actually write and speak.',
+      fields:[
+        {n:'website', l:'Your website', type:'text', opt:true},
+        {n:'socials', l:'Your social profiles', type:'textarea', opt:true, help:'Paste the links you are most active on (Instagram, LinkedIn, Facebook, YouTube).'},
+        {n:'writing_samples', l:'Writing that sounds most like you', type:'textarea', opt:true, help:'2 or 3 links: a blog post, a favorite email, a podcast episode.'},
+        {n:'manuscript', l:'Your manuscript', type:'file', accept:'.pdf,.doc,.docx,.md,.rtf,.txt', opt:true, help:'The full draft if you have it, in any format. It is the truest source of your voice and message, and we keep it private.'}
       ]},
     { key:'message', eyebrow:'Your message', title:'What’s the heart of it?', intro:'This is what your whole launch says in your voice. Rough notes are perfect.',
       fields:[
@@ -397,7 +406,30 @@
     document.getElementById('savenote').textContent = 'Submitted';
   }
 
-  render();
+  function gateOK(){
+    var k = (params.get('k')||'').trim().toLowerCase();
+    if(k === FORM_CODE){ try{ localStorage.setItem(GATE_STORE,'1'); }catch(e){} return true; }
+    try{ return localStorage.getItem(GATE_STORE) === '1'; }catch(e){ return false; }
+  }
+  function renderGate(){
+    barEl.style.width = '0%'; stepCountEl.textContent = '';
+    document.getElementById('savenote').textContent = '';
+    card.innerHTML =
+      '<div class="eyebrow">Launch OS</div>'+
+      '<h2 class="q-title">Welcome. Let’s get you set up.</h2>'+
+      '<p class="q-intro">This onboarding is for Launch OS clients. Enter the access code from your welcome email to begin.</p>'+
+      '<div class="field"><label class="l">Access code</label><input type="text" id="gatecode" autocomplete="off" placeholder="Your access code"><div class="fstatus err" id="gateerr"></div></div>';
+    navEl.innerHTML = '<span></span><button class="btn btn-primary" id="gatego">Unlock</button>';
+    function go(){
+      var v = (document.getElementById('gatecode').value||'').trim().toLowerCase();
+      if(v === FORM_CODE){ try{ localStorage.setItem(GATE_STORE,'1'); }catch(e){} render(); window.scrollTo(0,0); }
+      else { document.getElementById('gateerr').textContent = 'That code does not match. Check your welcome email.'; }
+    }
+    document.getElementById('gatego').onclick = go;
+    document.getElementById('gatecode').addEventListener('keydown', function(e){ if(e.key === 'Enter') go(); });
+  }
+
+  if(gateOK()){ render(); } else { renderGate(); }
 })();
 </script>
 </body>
