@@ -14,9 +14,12 @@
     --ink:#F5EFE6; --ink-2:#BDB1A2; --ink-3:#8B7F70;
     --gold:#E9B978; --gold-deep:#E4A24A; --on-gold:#1A130C;
     --err:#E28B7A; --ok:#8FCf9f;
-    --r:12px; --r-pill:999px;
+    --placeholder:#9A8D7C;
+    --r:12px; --r-sm:8px; --r-pill:999px;
   }
   *{box-sizing:border-box}
+  .skip{position:absolute;left:-9999px;top:0;z-index:10;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;background:var(--gold);color:var(--on-gold);padding:10px 18px;border-radius:0 0 var(--r) 0;text-decoration:none}
+  .skip:focus{left:0}
   html,body{margin:0;padding:0;background:var(--bg);min-height:100%}
   body{font-family:'Inter Tight',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
   .wrap{max-width:660px;margin:0 auto;padding:28px 22px 80px;min-height:100dvh;display:flex;flex-direction:column}
@@ -46,7 +49,7 @@
     width:100%;font-family:'Inter Tight',sans-serif;font-size:16px;color:var(--ink);
     background:var(--bg-2);border:1px solid var(--line-2);border-radius:var(--r);padding:13px 15px;
   }
-  input::placeholder,textarea::placeholder{color:#6E6456}
+  input::placeholder,textarea::placeholder{color:var(--placeholder)}
   textarea{min-height:96px;resize:vertical}
   select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23BDB1A2' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px center;padding-right:38px}
   input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(233,185,120,.16)}
@@ -54,7 +57,7 @@
   .field .errmsg{display:none;color:var(--err);font-size:13px;margin-top:6px}
   .field.invalid .errmsg{display:block}
   input[type=file]{padding:11px 14px;color:var(--ink-2);font-size:14px;cursor:pointer}
-  input[type=file]::file-selector-button{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;color:var(--on-gold);background:var(--gold);border:none;border-radius:8px;padding:9px 15px;margin-right:12px;cursor:pointer}
+  input[type=file]::file-selector-button{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;color:var(--on-gold);background:var(--gold);border:none;border-radius:var(--r-sm);padding:9px 15px;margin-right:12px;cursor:pointer}
   input[type=file]::file-selector-button:hover{background:var(--gold-deep)}
   .fstatus{font-size:13px;margin-top:8px;min-height:16px}
   .fstatus.up{color:var(--ink-3)} .fstatus.ok{color:var(--gold)} .fstatus.err{color:var(--err)}
@@ -97,7 +100,8 @@
 </style>
 </head>
 <body>
-<div class="wrap">
+<a class="skip" href="#main">Skip to content</a>
+<div class="wrap" id="main">
   <div class="top">
     <div class="brand">Launch<b>OS</b></div>
     <div class="savenote" id="savenote">Your progress saves automatically</div>
@@ -222,11 +226,12 @@
     var reqMark = f.req ? ' <span class="req">*</span>' : (f.opt ? ' <span class="opt">(optional)</span>' : '');
     var help = f.help ? '<div class="help">'+esc(f.help)+'</div>' : '';
     var err = '<div class="errmsg">This one’s needed to get started.</div>';
+    var id = 'f_'+f.n;
     var input;
     if(f.type === 'textarea'){
-      input = '<textarea data-n="'+f.n+'">'+esc(val)+'</textarea>';
+      input = '<textarea id="'+id+'" data-n="'+f.n+'">'+esc(val)+'</textarea>';
     } else if(f.type === 'select'){
-      input = '<select data-n="'+f.n+'"><option value="">Choose one</option>'+
+      input = '<select id="'+id+'" data-n="'+f.n+'"><option value="">Choose one</option>'+
         f.options.map(function(o){return '<option'+(val===o?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select>';
     } else if(f.type === 'checks'){
       var arr = Array.isArray(val) ? val : [];
@@ -236,12 +241,13 @@
       }).join('')+'</div>';
     } else if(f.type === 'file'){
       var fv = (val && typeof val === 'object' && val.name) ? val : null;
-      input = '<input type="file" data-n="'+f.n+'"'+(f.accept?' accept="'+f.accept+'"':'')+'>'+
+      input = '<input type="file" id="'+id+'" data-n="'+f.n+'"'+(f.accept?' accept="'+f.accept+'"':'')+'>'+
         '<div class="fstatus'+(fv?' ok':'')+'" data-fstatus="'+f.n+'">'+(fv?('Uploaded: '+esc(fv.name)):'')+'</div>';
     } else {
-      input = '<input type="'+(f.type||'text')+'" data-n="'+f.n+'" value="'+esc(val)+'"'+(f.type==='email'?' inputmode="email"':'')+'>';
+      input = '<input type="'+(f.type||'text')+'" id="'+id+'" data-n="'+f.n+'" value="'+esc(val)+'"'+(f.type==='email'?' inputmode="email"':'')+'>';
     }
-    return '<div class="field" data-field="'+f.n+'"><label class="l">'+esc(f.l)+reqMark+'</label>'+input+help+err+'</div>';
+    var forAttr = (f.type === 'checks') ? '' : ' for="'+id+'"';
+    return '<div class="field" data-field="'+f.n+'"><label class="l"'+forAttr+'>'+esc(f.l)+reqMark+'</label>'+input+help+err+'</div>';
   }
 
   function render(){
@@ -428,7 +434,7 @@
     var first = (data.author_name||'').trim().split(/\s+/)[0];
     if(/^(the|a|an|my|our|team|brand)$/i.test(first)) first = '';  // brand-led name, skip the greeting name
     card.innerHTML =
-      '<div class="confirm-icon">🌅</div>'+
+      '<div class="confirm-icon" aria-hidden="true">🌅</div>'+
       '<h2 class="q-title">Got it'+(first?', '+esc(first):'')+'. Thank you.</h2>'+
       '<p class="q-intro">Your brief is in. Here is what happens next: I build your launch system in your brand and voice, then send you a link to review everything live, usually within a few days. If you have files to send (cover, logo, testimonials), email them to <a href="mailto:adam@cheflifemedia.com">adam@cheflifemedia.com</a> anytime.</p>'+
       '<p class="q-intro" style="color:var(--ink-3);font-size:14px">Haven’t had your discovery call yet? <a href="'+BOOKING_URL+'" target="_blank" rel="noopener">Book it here</a>.</p>';
@@ -448,7 +454,7 @@
       '<div class="eyebrow">Launch OS</div>'+
       '<h2 class="q-title">Welcome. Let’s get you set up.</h2>'+
       '<p class="q-intro">This onboarding is for Launch OS clients. Enter the access code from your welcome email to begin.</p>'+
-      '<div class="field"><label class="l">Access code</label><input type="text" id="gatecode" autocomplete="off" placeholder="Your access code"><div class="fstatus err" id="gateerr"></div></div>';
+      '<div class="field"><label class="l" for="gatecode">Access code</label><input type="text" id="gatecode" autocomplete="off" placeholder="Your access code"><div class="fstatus err" id="gateerr"></div></div>';
     navEl.innerHTML = '<span></span><button class="btn btn-primary" id="gatego">Unlock</button>';
     function go(){
       var v = (document.getElementById('gatecode').value||'').trim().toLowerCase();
